@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Электронный дневник v1.0.0</title>
+    <title>Homework Electronic Diary v1.0.1</title>
     <style>
         :root {
             --bg-color: #0b0c10;
@@ -20,11 +20,84 @@
             color: var(--text-color);
             margin: 0;
             padding: 30px 15px;
+            position: relative;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
+        }
+
+        /* Кнопка настроек */
+        .settings-trigger {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid #2f3b4c;
+            color: var(--accent-color);
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(102, 252, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+
+            .settings-trigger:hover {
+                transform: rotate(45deg);
+                box-shadow: 0 0 15px var(--accent-color);
+            }
+
+        /* Модальное окно настроек */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border: 1px solid #2f3b4c;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.6);
+        }
+
+            .modal h2 {
+                margin-top: 0;
+                color: var(--accent-color);
+            }
+
+        .select-lang {
+            width: 100%;
+            padding: 12px;
+            background: #0b0c10;
+            color: #fff;
+            border: 1px solid #45a29e;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 15px 0 25px 0;
+        }
+
+        .btn-close-modal {
+            background: var(--accent-color);
+            color: #0b0c10;
         }
 
         h1 {
@@ -35,6 +108,7 @@
             letter-spacing: 2px;
             text-shadow: 0 0 10px var(--accent-color);
             margin-bottom: 30px;
+            padding-right: 40px;
         }
 
         .form-group {
@@ -109,7 +183,6 @@
             transition: all 0.3s ease;
         }
 
-            /* Стиль для выполненной карточки */
             .task-card.completed {
                 border-top-color: var(--success-color);
                 opacity: 0.5;
@@ -154,7 +227,6 @@
                 color: #000;
             }
 
-        /* Кнопка вернуть назад для выполненных */
         .task-card.completed .btn-done {
             border-color: var(--success-color);
             color: var(--success-color);
@@ -228,66 +300,189 @@
 </head>
 <body>
 
+    <!-- Кнопка вызова настроек -->
+    <button class="settings-trigger" onclick="toggleModal(true)">⚙️</button>
+
+    <!-- Окно настроек -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <h2 id="lang-modalTitle">Настройки</h2>
+            <label id="lang-modalLabel">Язык интерфейса:</label>
+            <select class="select-lang" id="langSelect" onchange="changeLanguage(this.value)">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+            </select>
+            <button class="btn-close-modal" id="lang-modalClose" onclick="toggleModal(false)">Закрыть</button>
+        </div>
+    </div>
+
     <div class="container">
-        <h1>📚 Электронный дневник для домашних заданий</h1>
+        <h1 id="lang-mainTitle">📚 Электронный дневник для домашних заданий</h1>
 
         <!-- Форма добавления -->
         <div class="form-group">
-            <label>Предмет:</label>
-            <input type="text" id="subject" placeholder="Укажите название предмета">
+            <label id="lang-labelSubject">Предмет:</label>
+            <input type="text" id="subject">
 
-            <label>Домашнее задание:</label>
-            <!-- Исправил косяк с английским плейсхолдером -->
-            <textarea id="taskText" rows="3" placeholder="Что необходимо выполнить..."></textarea>
+            <label id="lang-labelTask">Домашнее задание:</label>
+            <textarea id="taskText" rows="3"></textarea>
 
-            <label>Срок сдачи (дедлайн):</label>
+            <label id="lang-labelDeadline">Срок сдачи (дедлайн):</label>
             <input type="date" id="deadline">
 
-            <button onclick="addTask()">➕ Добавить в дневник</button>
+            <button onclick="addTask()" id="lang-btnAdd">➕ Добавить в дневник</button>
         </div>
 
-        <h2>📋 Текущие задания</h2>
+        <h2 id="lang-sectionTitle">📋 Текущие задания</h2>
         <div class="task-grid" id="taskList"></div>
 
         <!-- Строка заметок в самом конце страницы -->
         <div class="notes-group">
-            <label>📝 Заметки:</label>
-            <textarea id="diaryNotes" class="notes-textarea" placeholder="Сюда можно записать важные объявления, расписание кружков или напоминания..." oninput="saveNotes(this.value)"></textarea>
+            <label id="lang-labelNotes">📝 Заметки:</label>
+            <textarea id="diaryNotes" class="notes-textarea" oninput="saveNotes(this.value)"></textarea>
         </div>
 
         <!-- Кнопка Копирования -->
         <div class="export-box">
-            <button class="btn-share" onclick="exportData()">📋 Скопировать домашнее задание для класса</button>
+            <button class="btn-share" onclick="exportData()" id="lang-btnShare">📋 Скопировать домашнее задание для класса</button>
         </div>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", init);
         let timerInterval = null;
+        let currentLang = 'ru';
+
+        // Словарь переводов
+        const translations = {
+            ru: {
+                mainTitle: "📚 Электронный дневник для домашних заданий",
+                labelSubject: "Предмет:",
+                phSubject: "Укажите название предмета",
+                labelTask: "Домашнее задание:",
+                phTask: "Что необходимо выполнить...",
+                labelDeadline: "Срок сдачи (дедлайн):",
+                btnAdd: "➕ Добавить в дневник",
+                sectionTitle: "📋 Текущие задания",
+                labelNotes: "📝 Заметки:",
+                phNotes: "Сюда можно записать важные объявления, расписание кружков или напоминания...",
+                btnShare: "📋 Скопировать домашнее задание для класса",
+                modalTitle: "⚙️ Настройки",
+                modalLabel: "Язык интерфейса:",
+                modalClose: "Закрыть",
+                emptyList: "Записи отсутствуют. Добавьте первое задание!",
+                alertFields: "Пожалуйста, заполните поля предмета и текста задания!",
+                confirmDel: "Вы действительно хотите удалить эту запись?",
+                cardDeadline: "📅 Срок сдачи: ",
+                btnReturn: "↩️ Вернуть",
+                btnDone: "✅ Выполнено",
+                btnDel: "🗑️ Удалить",
+                timerExpired: "🔴 Срок выполнения истек",
+                timerDone: "🎉 Задание выполнено!",
+                timerLeftDays: "🟢 До сдачи осталось: {d} дн.",
+                timerLeftTime: "⏳ Времени осталось: ",
+                exportHeader: "📌 Домашнее задание:\n\n",
+                exportNotes: "📝 Заметки:\n",
+                exportSuccess: "Все домашние задания и заметки успешно скопированы в буфер обмена!",
+                exportEmpty: "Список пуст, нет данных для копирования."
+            },
+            en: {
+                mainTitle: "📚 Homework Electronic Diary",
+                labelSubject: "Subject:",
+                phSubject: "Enter subject name",
+                labelTask: "Homework assignment:",
+                phTask: "What needs to be done...",
+                labelDeadline: "Deadline:",
+                btnAdd: "➕ Add to Diary",
+                sectionTitle: "📋 Current Tasks",
+                labelNotes: "📝 Notes:",
+                phNotes: "Write important announcements, schedules, or reminders here...",
+                btnShare: "📋 Copy homework for the class",
+                modalTitle: "⚙️ Settings",
+                modalLabel: "Interface Language:",
+                modalClose: "Close",
+                emptyList: "No tasks found. Add your first assignment!",
+                alertFields: "Please fill in both the subject and task fields!",
+                confirmDel: "Are you sure you want to delete this record?",
+                cardDeadline: "📅 Deadline: ",
+                btnReturn: "↩️ Return",
+                btnDone: "✅ Done",
+                btnDel: "🗑️ Delete",
+                timerExpired: "🔴 Time's up",
+                timerDone: "🎉 Task completed!",
+                timerLeftDays: "🟢 Time left: {d} days",
+                timerLeftTime: "⏳ Time left: ",
+                exportHeader: "📌 Homework Assignment:\n\n",
+                exportNotes: "📝 Notes:\n",
+                exportSuccess: "All homework and notes have been copied to clipboard!",
+                exportEmpty: "The list is empty, no data to copy."
+            }
+        };
+
+        document.addEventListener("DOMContentLoaded", init);
 
         function getSubjectEmoji(subject) {
             const sub = subject.toLowerCase().trim();
-            if (sub.includes("мат") || sub.includes("алг") || sub.includes("геом")) return "🧮";
-            if (sub.includes("рус") || sub.includes("лит")) return "📖";
-            if (sub.includes("англ") || sub.includes("ино")) return "🇬🇧";
-            if (sub.includes("физ")) return "⚛️";
-            if (sub.includes("хим")) return "🧪";
-            if (sub.includes("ист") || sub.includes("общ")) return "⏳";
-            if (sub.includes("био")) return "🌿";
-            if (sub.includes("геог")) return "🌍";
-            if (sub.includes("инф")) return "💻";
-            if (sub.includes("физр") || sub.includes("спорт")) return "⚽";
+            if (sub.includes("мат") || sub.includes("алг") || sub.includes("геом") || sub.includes("math")) return "🧮";
+            if (sub.includes("рус") || sub.includes("лит") || sub.includes("rus") || sub.includes("lit")) return "📖";
+            if (sub.includes("анг") || sub.includes("ино") || sub.includes("eng")) return "🇬🇧";
+            if (sub.includes("физ") || sub.includes("phy")) return "⚛️";
+            if (sub.includes("хим") || sub.includes("chem")) return "🧪";
+            if (sub.includes("ист") || sub.includes("общ") || sub.includes("hist")) return "⏳";
+            if (sub.includes("био") || sub.includes("bio")) return "🌿";
+            if (sub.includes("гео") || sub.includes("geo")) return "🌍";
+            if (sub.includes("инф") || sub.includes("comp")) return "💻";
+            if (sub.includes("физр") || sub.includes("спорт") || sub.includes("sport")) return "⚽";
             return "📘";
         }
 
         function init() {
+            currentLang = localStorage.getItem("diary_lang") || "ru";
+            document.getElementById("langSelect").value = currentLang;
+
             document.getElementById('deadline').valueAsDate = new Date();
+
+            applyLanguage();
             renderTasks();
 
             document.getElementById("diaryNotes").value = localStorage.getItem("diary_notes_data") || "";
 
             if (timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(updateAllTimers, 1000);
+        }
+
+        // Переключение модального окна
+        function toggleModal(show) {
+            document.getElementById("settingsModal").style.display = show ? "flex" : "none";
+        }
+
+        // Изменение языка
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem("diary_lang", lang);
+            applyLanguage();
+            renderTasks();
+        }
+
+        // Накатывание текстов из словаря
+        function applyLanguage() {
+            const t = translations[currentLang];
+
+            document.getElementById("lang-mainTitle").innerText = t.mainTitle;
+            document.getElementById("lang-labelSubject").innerText = t.labelSubject;
+            document.getElementById("lang-labelTask").innerText = t.labelTask;
+            document.getElementById("lang-labelDeadline").innerText = t.labelDeadline;
+            document.getElementById("lang-btnAdd").innerText = t.btnAdd;
+            document.getElementById("lang-sectionTitle").innerText = t.sectionTitle;
+            document.getElementById("lang-labelNotes").innerText = t.labelNotes;
+            document.getElementById("lang-btnShare").innerText = t.btnShare;
+            document.getElementById("lang-modalTitle").innerText = t.modalTitle;
+            document.getElementById("lang-modalLabel").innerText = t.modalLabel;
+            document.getElementById("lang-modalClose").innerText = t.modalClose;
+
+            // Плейсхолдеры
+            document.getElementById("subject").placeholder = t.phSubject;
+            document.getElementById("taskText").placeholder = t.phTask;
+            document.getElementById("diaryNotes").placeholder = t.phNotes;
         }
 
         function getTasks() {
@@ -308,7 +503,7 @@
             const deadline = document.getElementById("deadline").value;
 
             if (!subject || !text) {
-                alert("Пожалуйста, заполните поля предмета и текста задания!");
+                alert(translations[currentLang].alertFields);
                 return;
             }
 
@@ -327,7 +522,6 @@
             document.getElementById("taskText").value = "";
         }
 
-        // Изменение статуса выполнения
         function toggleTask(id) {
             const tasks = getTasks().map(t => {
                 if (t.id === id) t.completed = !t.completed;
@@ -338,7 +532,7 @@
         }
 
         function deleteTask(id) {
-            if (confirm("Вы действительно хотите удалить эту запись?")) {
+            if (confirm(translations[currentLang].confirmDel)) {
                 const tasks = getTasks().filter(t => t.id !== id);
                 saveTasks(tasks);
                 renderTasks();
@@ -349,33 +543,34 @@
             const taskList = document.getElementById("taskList");
             taskList.innerHTML = "";
             const tasks = getTasks();
+            const t = translations[currentLang];
 
             if (tasks.length === 0) {
-                taskList.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#666;'>Записи отсутствуют. Добавьте первое задание!</p>";
+                taskList.innerHTML = `<p style='grid-column: 1/-1; text-align:center; color:#666;'>${t.emptyList}</p>`;
                 return;
             }
 
-            tasks.forEach(t => {
+            tasks.forEach(task => {
                 const card = document.createElement("div");
-                card.className = `task-card ${t.completed ? 'completed' : ''}`;
+                card.className = `task-card ${task.completed ? 'completed' : ''}`;
 
-                const dateObj = new Date(t.deadline);
-                const formattedDate = isNaN(dateObj) ? t.deadline : dateObj.toLocaleDateString("ru-RU");
-                const emoji = getSubjectEmoji(t.subject);
+                const dateObj = new Date(task.deadline);
+                const formattedDate = isNaN(dateObj) ? task.deadline : dateObj.toLocaleDateString(currentLang === 'ru' ? "ru-RU" : "en-US");
+                const emoji = getSubjectEmoji(task.subject);
 
-                let timerHtml = `<div class="live-timer" id="timer-${t.id}" data-deadline="${t.deadline}" data-id="${t.id}" style="font-weight: bold; margin-top: 5px;"></div>`;
+                let timerHtml = `<div class="live-timer" id="timer-${task.id}" data-deadline="${task.deadline}" data-id="${task.id}" style="font-weight: bold; margin-top: 5px;"></div>`;
 
                 card.innerHTML = `
                     <div>
-                        <h3>${emoji} ${t.subject}</h3>
-                        <p>${t.text}</p>
+                        <h3>${emoji} ${task.subject}</h3>
+                        <p>${task.text}</p>
                     </div>
                     <div>
-                        <div class="date">📅 Срок сдачи: ${formattedDate}</div>
+                        <div class="date">${t.cardDeadline}${formattedDate}</div>
                         ${timerHtml}
                         <div class="actions">
-                            <button class="btn-done" onclick="toggleTask(${t.id})">${t.completed ? '↩️ Вернуть' : '✅ Выполнено'}</button>
-                            <button class="btn-del" onclick="deleteTask(${t.id})">🗑️ Удалить</button>
+                            <button class="btn-done" onclick="toggleTask(${task.id})">${task.completed ? t.btnReturn : t.btnDone}</button>
+                            <button class="btn-del" onclick="deleteTask(${task.id})">${t.btnDel}</button>
                         </div>
                     </div>
                 `;
@@ -385,11 +580,11 @@
             updateAllTimers();
         }
 
-        // Умный фоновый таймер с автоматическим очищением просроченного выполненного ДЗ
         function updateAllTimers() {
             const timers = document.querySelectorAll('.live-timer');
             let dataChanged = false;
             let tasks = getTasks();
+            const t = translations[currentLang];
 
             timers.forEach(timerElement => {
                 const deadlineStr = timerElement.getAttribute('data-deadline');
@@ -401,44 +596,40 @@
                 const now = new Date();
                 const diffMs = targetDate - now;
 
-                const currentTask = tasks.find(t => t.id === taskId);
+                const currentTask = tasks.find(tsk => tsk.id === taskId);
 
-                // Если время истекло
                 if (diffMs <= 0) {
-                    // Если задание было отмечено как ВЫПОЛНЕНО — полностью удаляем его из базы данных!
                     if (currentTask && currentTask.completed) {
-                        tasks = tasks.filter(t => t.id !== taskId);
+                        tasks = tasks.filter(tsk => tsk.id !== taskId);
                         dataChanged = true;
                         return;
                     }
 
-                    timerElement.innerHTML = `🔴 Срок выполнения истек`;
+                    timerElement.innerHTML = t.timerExpired;
                     timerElement.style.color = "var(--danger-color)";
                     return;
                 }
 
-                // Обычный расчет времени
                 const diffSecs = Math.floor(diffMs / 1000);
                 const diffMins = Math.floor(diffSecs / 60);
                 const diffHours = Math.floor(diffMins / 60);
                 const diffDays = Math.floor(diffHours / 24);
 
                 if (currentTask && currentTask.completed) {
-                    timerElement.innerHTML = `🎉 Задание выполнено!`;
+                    timerElement.innerHTML = t.timerDone;
                     timerElement.style.color = "var(--success-color)";
                 } else if (diffDays >= 1) {
-                    timerElement.innerHTML = `🟢 До сдачи осталось: ${diffDays} дн.`;
+                    timerElement.innerHTML = t.timerLeftDays.replace("{d}", diffDays);
                     timerElement.style.color = "var(--success-color)";
                 } else {
                     const hours = String(diffHours % 24).padStart(2, '0');
                     const minutes = String(diffMins % 60).padStart(2, '0');
                     const seconds = String(diffSecs % 60).padStart(2, '0');
-                    timerElement.innerHTML = `⏳ Времени осталось: ${hours}:${minutes}:${seconds}`;
+                    timerElement.innerHTML = `${t.timerLeftTime}${hours}:${minutes}:${seconds}`;
                     timerElement.style.color = "#ffb74d";
                 }
             });
 
-            // Если сработал автокомплит и задача удалилась по дедлайну
             if (dataChanged) {
                 saveTasks(tasks);
                 renderTasks();
@@ -448,29 +639,30 @@
         function exportData() {
             const tasks = getTasks();
             const savedNotes = localStorage.getItem("diary_notes_data") || "";
+            const t = translations[currentLang];
 
             if (tasks.length === 0 && savedNotes.trim() === "") {
-                alert("Список пуст, нет данных для копирования.");
+                alert(t.exportEmpty);
                 return;
             }
 
-            let textMessage = "📌 Домашнее задание:\n\n";
+            let textMessage = t.exportHeader;
 
-            tasks.forEach(t => {
-                const dateObj = new Date(t.deadline);
-                const formattedDate = isNaN(dateObj) ? t.deadline : dateObj.toLocaleDateString("ru-RU");
-                const emoji = getSubjectEmoji(t.subject);
-                const statusText = t.completed ? " [ВЫПОЛНЕНО]" : "";
+            tasks.forEach(task => {
+                const dateObj = new Date(task.deadline);
+                const formattedDate = isNaN(dateObj) ? task.deadline : dateObj.toLocaleDateString(currentLang === 'ru' ? "ru-RU" : "en-US");
+                const emoji = getSubjectEmoji(task.subject);
+                const statusText = task.completed ? " [ВЫПОЛНЕНО]" : "";
 
-                textMessage += `${emoji} ${t.subject}${statusText} (Срок сдачи: ${formattedDate}) — ${t.text}\n\n`;
+                textMessage += `${emoji} ${task.subject}${statusText} (${t.cardDeadline.trim()} ${formattedDate}) — ${task.text}\n\n`;
             });
 
             if (savedNotes.trim() !== "") {
-                textMessage += `📝 Заметки:\n${savedNotes.trim()}\n`;
+                textMessage += `${t.exportNotes}${savedNotes.trim()}\n`;
             }
 
             navigator.clipboard.writeText(textMessage.trim()).then(() => {
-                alert("Все домашние задания и заметки успешно скопированыв буфер обмена!");
+                alert(t.exportSuccess);
             });
         }
     </script>
