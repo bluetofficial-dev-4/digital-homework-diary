@@ -1,0 +1,478 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электронный дневник v1.0.0</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --text-color: #c5c6c7;
+            --accent-color: #66fcf1;
+            --success-color: #03dac6;
+            --danger-color: #ff4a5a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-color);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #2f3b4c;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0 20px 0;
+            border-radius: 6px;
+            border: 1px solid #45a29e;
+            background: #0b0c10;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+            input:focus, textarea:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 8px var(--accent-color);
+            }
+
+        button {
+            background: var(--accent-color);
+            color: #0b0c10;
+            font-weight: bold;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0;
+            text-transform: uppercase;
+        }
+
+            button:hover {
+                box-shadow: 0 0 15px var(--accent-color);
+                transform: translateY(-2px);
+            }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .task-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #2f3b4c;
+            border-top: 5px solid var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+            /* Стиль для выполненной карточки */
+            .task-card.completed {
+                border-top-color: var(--success-color);
+                opacity: 0.5;
+            }
+
+            .task-card h3 {
+                margin: 0 0 10px 0;
+                font-size: 20px;
+                color: #fff;
+            }
+
+            .task-card p {
+                margin: 0 0 15px 0;
+                color: #a4a7ab;
+                font-size: 15px;
+                line-height: 1.4;
+                word-break: break-word;
+            }
+
+            .task-card .date {
+                font-size: 13px;
+                color: #45a29e;
+                margin-bottom: 5px;
+            }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-done {
+            background: #1f2833;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 8px;
+            font-size: 14px;
+        }
+
+            .btn-done:hover {
+                background: var(--accent-color);
+                color: #000;
+            }
+
+        /* Кнопка вернуть назад для выполненных */
+        .task-card.completed .btn-done {
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+            .task-card.completed .btn-done:hover {
+                background: var(--success-color);
+                color: #000;
+            }
+
+        .btn-del {
+            background: transparent;
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+            padding: 8px;
+            font-size: 14px;
+        }
+
+            .btn-del:hover {
+                background: var(--danger-color);
+                color: #fff;
+            }
+
+        .notes-group {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 40px;
+            border: 1px solid #2f3b4c;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            height: 100px;
+            background: #0b0c10;
+            border: 1px dashed #45a29e;
+            border-radius: 6px;
+            color: #fff;
+            padding: 12px;
+            font-size: 15px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+
+            .notes-textarea:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 8px var(--accent-color);
+            }
+
+        .export-box {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn-share {
+            background: #1f4068;
+            color: #fff;
+            border: 1px solid #0077b6;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+            .btn-share:hover {
+                box-shadow: 0 0 15px #0077b6;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📚 Электронный дневник для домашних заданий</h1>
+
+        <!-- Форма добавления -->
+        <div class="form-group">
+            <label>Предмет:</label>
+            <input type="text" id="subject" placeholder="Укажите название предмета">
+
+            <label>Домашнее задание:</label>
+            <!-- Исправил косяк с английским плейсхолдером -->
+            <textarea id="taskText" rows="3" placeholder="Что необходимо выполнить..."></textarea>
+
+            <label>Срок сдачи (дедлайн):</label>
+            <input type="date" id="deadline">
+
+            <button onclick="addTask()">➕ Добавить в дневник</button>
+        </div>
+
+        <h2>📋 Текущие задания</h2>
+        <div class="task-grid" id="taskList"></div>
+
+        <!-- Строка заметок в самом конце страницы -->
+        <div class="notes-group">
+            <label>📝 Заметки:</label>
+            <textarea id="diaryNotes" class="notes-textarea" placeholder="Сюда можно записать важные объявления, расписание кружков или напоминания..." oninput="saveNotes(this.value)"></textarea>
+        </div>
+
+        <!-- Кнопка Копирования -->
+        <div class="export-box">
+            <button class="btn-share" onclick="exportData()">📋 Скопировать домашнее задание для класса</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", init);
+        let timerInterval = null;
+
+        function getSubjectEmoji(subject) {
+            const sub = subject.toLowerCase().trim();
+            if (sub.includes("мат") || sub.includes("алг") || sub.includes("геом")) return "🧮";
+            if (sub.includes("рус") || sub.includes("лит")) return "📖";
+            if (sub.includes("англ") || sub.includes("ино")) return "🇬🇧";
+            if (sub.includes("физ")) return "⚛️";
+            if (sub.includes("хим")) return "🧪";
+            if (sub.includes("ист") || sub.includes("общ")) return "⏳";
+            if (sub.includes("био")) return "🌿";
+            if (sub.includes("геог")) return "🌍";
+            if (sub.includes("инф")) return "💻";
+            if (sub.includes("физр") || sub.includes("спорт")) return "⚽";
+            return "📘";
+        }
+
+        function init() {
+            document.getElementById('deadline').valueAsDate = new Date();
+            renderTasks();
+
+            document.getElementById("diaryNotes").value = localStorage.getItem("diary_notes_data") || "";
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateAllTimers, 1000);
+        }
+
+        function getTasks() {
+            return JSON.parse(localStorage.getItem("school_tasks")) || [];
+        }
+
+        function saveTasks(tasks) {
+            localStorage.setItem("school_tasks", JSON.stringify(tasks));
+        }
+
+        function saveNotes(value) {
+            localStorage.setItem("diary_notes_data", value);
+        }
+
+        function addTask() {
+            const subject = document.getElementById("subject").value.trim();
+            const text = document.getElementById("taskText").value.trim();
+            const deadline = document.getElementById("deadline").value;
+
+            if (!subject || !text) {
+                alert("Пожалуйста, заполните поля предмета и текста задания!");
+                return;
+            }
+
+            const tasks = getTasks();
+            tasks.push({
+                id: Date.now(),
+                subject: subject,
+                text: text,
+                deadline: deadline,
+                completed: false
+            });
+
+            saveTasks(tasks);
+            renderTasks();
+            document.getElementById("subject").value = "";
+            document.getElementById("taskText").value = "";
+        }
+
+        // Изменение статуса выполнения
+        function toggleTask(id) {
+            const tasks = getTasks().map(t => {
+                if (t.id === id) t.completed = !t.completed;
+                return t;
+            });
+            saveTasks(tasks);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            if (confirm("Вы действительно хотите удалить эту запись?")) {
+                const tasks = getTasks().filter(t => t.id !== id);
+                saveTasks(tasks);
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = "";
+            const tasks = getTasks();
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:#666;'>Записи отсутствуют. Добавьте первое задание!</p>";
+                return;
+            }
+
+            tasks.forEach(t => {
+                const card = document.createElement("div");
+                card.className = `task-card ${t.completed ? 'completed' : ''}`;
+
+                const dateObj = new Date(t.deadline);
+                const formattedDate = isNaN(dateObj) ? t.deadline : dateObj.toLocaleDateString("ru-RU");
+                const emoji = getSubjectEmoji(t.subject);
+
+                let timerHtml = `<div class="live-timer" id="timer-${t.id}" data-deadline="${t.deadline}" data-id="${t.id}" style="font-weight: bold; margin-top: 5px;"></div>`;
+
+                card.innerHTML = `
+                    <div>
+                        <h3>${emoji} ${t.subject}</h3>
+                        <p>${t.text}</p>
+                    </div>
+                    <div>
+                        <div class="date">📅 Срок сдачи: ${formattedDate}</div>
+                        ${timerHtml}
+                        <div class="actions">
+                            <button class="btn-done" onclick="toggleTask(${t.id})">${t.completed ? '↩️ Вернуть' : '✅ Выполнено'}</button>
+                            <button class="btn-del" onclick="deleteTask(${t.id})">🗑️ Удалить</button>
+                        </div>
+                    </div>
+                `;
+                taskList.appendChild(card);
+            });
+
+            updateAllTimers();
+        }
+
+        // Умный фоновый таймер с автоматическим очищением просроченного выполненного ДЗ
+        function updateAllTimers() {
+            const timers = document.querySelectorAll('.live-timer');
+            let dataChanged = false;
+            let tasks = getTasks();
+
+            timers.forEach(timerElement => {
+                const deadlineStr = timerElement.getAttribute('data-deadline');
+                const taskId = parseInt(timerElement.getAttribute('data-id'));
+
+                const targetDate = new Date(deadlineStr);
+                targetDate.setHours(23, 59, 59, 999);
+
+                const now = new Date();
+                const diffMs = targetDate - now;
+
+                const currentTask = tasks.find(t => t.id === taskId);
+
+                // Если время истекло
+                if (diffMs <= 0) {
+                    // Если задание было отмечено как ВЫПОЛНЕНО — полностью удаляем его из базы данных!
+                    if (currentTask && currentTask.completed) {
+                        tasks = tasks.filter(t => t.id !== taskId);
+                        dataChanged = true;
+                        return;
+                    }
+
+                    timerElement.innerHTML = `🔴 Срок выполнения истек`;
+                    timerElement.style.color = "var(--danger-color)";
+                    return;
+                }
+
+                // Обычный расчет времени
+                const diffSecs = Math.floor(diffMs / 1000);
+                const diffMins = Math.floor(diffSecs / 60);
+                const diffHours = Math.floor(diffMins / 60);
+                const diffDays = Math.floor(diffHours / 24);
+
+                if (currentTask && currentTask.completed) {
+                    timerElement.innerHTML = `🎉 Задание выполнено!`;
+                    timerElement.style.color = "var(--success-color)";
+                } else if (diffDays >= 1) {
+                    timerElement.innerHTML = `🟢 До сдачи осталось: ${diffDays} дн.`;
+                    timerElement.style.color = "var(--success-color)";
+                } else {
+                    const hours = String(diffHours % 24).padStart(2, '0');
+                    const minutes = String(diffMins % 60).padStart(2, '0');
+                    const seconds = String(diffSecs % 60).padStart(2, '0');
+                    timerElement.innerHTML = `⏳ Времени осталось: ${hours}:${minutes}:${seconds}`;
+                    timerElement.style.color = "#ffb74d";
+                }
+            });
+
+            // Если сработал автокомплит и задача удалилась по дедлайну
+            if (dataChanged) {
+                saveTasks(tasks);
+                renderTasks();
+            }
+        }
+
+        function exportData() {
+            const tasks = getTasks();
+            const savedNotes = localStorage.getItem("diary_notes_data") || "";
+
+            if (tasks.length === 0 && savedNotes.trim() === "") {
+                alert("Список пуст, нет данных для копирования.");
+                return;
+            }
+
+            let textMessage = "📌 Домашнее задание:\n\n";
+
+            tasks.forEach(t => {
+                const dateObj = new Date(t.deadline);
+                const formattedDate = isNaN(dateObj) ? t.deadline : dateObj.toLocaleDateString("ru-RU");
+                const emoji = getSubjectEmoji(t.subject);
+                const statusText = t.completed ? " [ВЫПОЛНЕНО]" : "";
+
+                textMessage += `${emoji} ${t.subject}${statusText} (Срок сдачи: ${formattedDate}) — ${t.text}\n\n`;
+            });
+
+            if (savedNotes.trim() !== "") {
+                textMessage += `📝 Заметки:\n${savedNotes.trim()}\n`;
+            }
+
+            navigator.clipboard.writeText(textMessage.trim()).then(() => {
+                alert("Все домашние задания и заметки успешно скопированыв буфер обмена!");
+            });
+        }
+    </script>
+</body>
+</html>
