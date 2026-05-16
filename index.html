@@ -1,217 +1,802 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Homework Electronic Diary v1.1.0 (cut down version, for English users only)</title>
+    <title>Электронный дневник v1.1.0</title>
     <style>
         :root {
-            --bg-color: #0b0c10; --card-bg: #1f2833; --text-color: #c5c6c7;
-            --accent-color: #66fcf1; --success-color: #03dac6; --danger-color: #ff4a5a;
-            --share-btn-bg: #1f4068; --share-btn-border: #0077b6;
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --text-color: #c5c6c7;
+            --accent-color: #66fcf1;
+            --success-color: #03dac6;
+            --danger-color: #ff4a5a;
+            --share-btn-bg: #1f4068;
+            --share-btn-border: #0077b6;
         }
+
         [data-theme="matrix"] {
-            --bg-color: #050d06; --card-bg: #0d1f10; --text-color: #a2caa5;
-            --accent-color: #00ff41; --success-color: #39ff14; --danger-color: #990000;
-            --share-btn-bg: #143318; --share-btn-border: #00ff41;
+            --bg-color: #050d06;
+            --card-bg: #0d1f10;
+            --text-color: #a2caa5;
+            --accent-color: #00ff41;
+            --success-color: #39ff14;
+            --danger-color: #990000;
+            --share-btn-bg: #143318;
+            --share-btn-border: #00ff41;
         }
+
         [data-theme="cyberpunk"] {
-            --bg-color: #1a0826; --card-bg: #2c103f; --text-color: #f0e6f6;
-            --accent-color: #fcee0a; --success-color: #00f0ff; --danger-color: #ff0055;
-            --share-btn-bg: #471465; --share-btn-border: #fcee0a;
+            --bg-color: #1a0826;
+            --card-bg: #2c103f;
+            --text-color: #f0e6f6;
+            --accent-color: #fcee0a;
+            --success-color: #00f0ff;
+            --danger-color: #ff0055;
+            --share-btn-bg: #471465;
+            --share-btn-border: #fcee0a;
         }
+
         [data-theme="sakura"] {
-            --bg-color: #2b1f24; --card-bg: #413037; --text-color: #f7e6ec;
-            --accent-color: #ffb7c5; --success-color: #a8e6cf; --danger-color: #ff8b94;
-            --share-btn-bg: #5a3d47; --share-btn-border: #ffb7c5;
+            --bg-color: #2b1f24;
+            --card-bg: #413037;
+            --text-color: #f7e6ec;
+            --accent-color: #ffb7c5;
+            --success-color: #a8e6cf;
+            --danger-color: #ff8b94;
+            --share-btn-bg: #5a3d47;
+            --share-btn-border: #ffb7c5;
         }
+
         [data-theme="crimson"] {
-            --bg-color: #0d0405; --card-bg: #1f1113; --text-color: #f5e6e7;
-            --accent-color: #ff2e44; --success-color: #ff0055; --danger-color: #990011;
-            --share-btn-bg: #50121a; --share-btn-border: #ff2e44;
+            --bg-color: #0d0405;
+            --card-bg: #1f1113;
+            --text-color: #f5e6e7;
+            --accent-color: #ff2e44;
+            --success-color: #ff0055;
+            --danger-color: #990011;
+            --share-btn-bg: #50121a;
+            --share-btn-border: #ff2e44;
         }
+
         body {
-            font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-color);
-            margin: 0; padding: 30px 15px; position: relative; transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 30px 15px;
+            position: relative;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .container { max-width: 900px; margin: 0 auto; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         .settings-trigger {
-            position: absolute; top: 20px; right: 20px; background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1);
-            color: var(--accent-color); font-size: 24px; padding: 10px; border-radius: 50%; cursor: pointer;
-            width: auto; margin: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); transition: all 0.3s ease;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--accent-color);
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
         }
-        .settings-trigger:hover { transform: rotate(45deg); box-shadow: 0 0 15px var(--accent-color); }
+        .settings-trigger:hover {
+            transform: rotate(45deg);
+            box-shadow: 0 0 15px var(--accent-color);
+        }
+
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 1000;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
         }
         .modal {
-            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 5px 25px rgba(0,0,0,0.6);
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.6);
         }
-        .modal h2 { margin-top: 0; color: var(--accent-color); }
+        .modal h2 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
         .select-custom {
-            width: 100%; padding: 12px; background: #0b0c10; color: #fff; border: 1px solid #45a29e; border-radius: 6px; font-size: 16px; margin: 10px 0 20px 0; box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            background: #0b0c10;
+            color: #fff;
+            border: 1px solid #45a29e;
+            border-radius: 6px;
+            font-size: 16px;
+            margin: 10px 0 20px 0;
+            box-sizing: border-box;
         }
-        .select-custom:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 12px var(--accent-color); }
+        .select-custom:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px var(--accent-color);
+        }
+        
         .btn-close-modal {
-            width: 100%; padding: 12px; margin: 5px 0 0 0; border-radius: 6px; background: var(--accent-color); color: #0b0c10; font-weight: bold; font-size: 18px; border: none; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0 0 0;
+            border-radius: 6px;
+            background: var(--accent-color);
+            color: #0b0c10;
+            font-weight: bold;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            box-sizing: border-box;
         }
-        .btn-close-modal:hover { box-shadow: 0 0 15px var(--accent-color); transform: translateY(-2px); }
-        h1 { text-align: center; color: var(--accent-color); font-size: 32px; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--accent-color); margin-bottom: 30px; padding-right: 40px; }
-        .form-group { background: var(--card-bg); padding: 25px; border-radius: 12px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        label { font-weight: bold; font-size: 16px; color: #fff; display: block; margin-bottom: 5px; }
+        .btn-close-modal:hover {
+            box-shadow: 0 0 15px var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-color);
+            margin-bottom: 30px;
+            padding-right: 40px;
+        }
+
+        .form-group {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+            display: block;
+            margin-bottom: 5px;
+        }
+
         input, textarea, select.subject-select {
-            width: 100%; padding: 12px; margin: 5px 0 20px 0; border-radius: 6px; border: 1px solid #45a29e; background: #0b0c10; color: #fff; font-size: 16px; box-sizing: border-box; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0 20px 0;
+            border-radius: 6px;
+            border: 1px solid #45a29e;
+            background: #0b0c10;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+            box-shadow: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        input:focus, textarea:focus, select.subject-select:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 12px var(--accent-color); }
-        .btn-add-main { width: 100%; padding: 12px; margin: 5px 0 0 0; border-radius: 6px; background: var(--accent-color); color: #0b0c10; font-weight: bold; font-size: 18px; border: none; cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; box-sizing: border-box; }
-        .btn-add-main:hover { box-shadow: 0 0 15px var(--accent-color); transform: translateY(-2px); }
-        .task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .task-card { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); border-top: 5px solid var(--accent-color); box-shadow: 0 4px 10px rgba(0,0,0,0.4); display: flex; flex-direction: column; justify-content: space-between; transition: all 0.3s ease; }
-        .task-card.completed { border-top-color: var(--success-color); opacity: 0.5; }
-        .task-card h3 { margin: 0 0 10px 0; font-size: 20px; color: #fff; }
-        .task-card p { margin: 0 0 15px 0; color: #a4a7ab; font-size: 15px; line-height: 1.4; word-break: break-word; }
-        .task-card .date { font-size: 13px; color: #45a29e; margin-bottom: 5px; }
-        .actions { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-done, .btn-del { width: 100%; padding: 8px; border-radius: 6px; font-size: 14px; cursor: pointer; box-sizing: border-box; transition: all 0.2s ease; font-weight: bold; text-transform: uppercase; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-done { background: #1f2833; border: 2px solid var(--accent-color); color: var(--accent-color); }
-        .btn-done:hover { background: var(--accent-color); color: #000; }
-        .task-card.completed .btn-done { border-color: var(--success-color); color: var(--success-color); }
-        .task-card.completed .btn-done:hover { background: var(--success-color); color: #000; }
-        .btn-del { background: transparent; border: 2px solid var(--danger-color); color: var(--danger-color); }
-        .btn-del:hover { background: var(--danger-color); color: #fff; }
-        .notes-group { background: var(--card-bg); padding: 20px; border-radius: 12px; margin-top: 40px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .notes-textarea { width: 100%; height: 100px; background: #0b0c10; border: 1px dashed #45a29e; border-radius: 6px; color: #fff; padding: 12px; font-size: 15px; box-sizing: border-box; resize: vertical; font-family: inherit; margin-top: 10px; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-        .notes-textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 12px var(--accent-color); }
-        .export-box { text-align: center; margin-top: 30px; }
+
+        input:focus, textarea:focus, select.subject-select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px var(--accent-color);
+        }
+
+        .btn-add-main {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0 0 0;
+            border-radius: 6px;
+            background: var(--accent-color);
+            color: #0b0c10;
+            font-weight: bold;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            box-sizing: border-box;
+        }
+
+        .btn-add-main:hover {
+            box-shadow: 0 0 15px var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .task-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: 5px solid var(--accent-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .task-card.completed {
+            border-top-color: var(--success-color);
+            opacity: 0.5;
+        }
+
+        .task-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .task-card p {
+            margin: 0 0 15px 0;
+            color: #a4a7ab;
+            font-size: 15px;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .task-card .date {
+            font-size: 13px;
+            color: #45a29e;
+            margin-bottom: 5px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-done, .btn-del {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-done {
+            background: #1f2833;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .btn-done:hover {
+            background: var(--accent-color);
+            color: #000;
+        }
+
+        .task-card.completed .btn-done {
+            border-color: var(--success-color);
+            color: var(--success-color);
+        }
+
+        .task-card.completed .btn-done:hover {
+            background: var(--success-color);
+            color: #000;
+        }
+
+        .btn-del {
+            background: transparent;
+            border: 2px solid var(--danger-color);
+            color: var(--danger-color);
+        }
+
+        .btn-del:hover {
+            background: var(--danger-color);
+            color: #fff;
+        }
+
+        .notes-group {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 40px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        .notes-textarea {
+            width: 100%;
+            height: 100px;
+            background: #0b0c10;
+            border: 1px dashed #45a29e;
+            border-radius: 6px;
+            color: #fff;
+            padding: 12px;
+            font-size: 15px;
+            box-sizing: border-box;
+            resize: vertical;
+            font-family: inherit;
+            margin-top: 10px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .notes-textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 12px var(--accent-color);
+        }
+
+        .export-box {
+            text-align: center;
+            margin-top: 30px;
+        }
+
         .btn-share {
-            width: 100%; background: var(--share-btn-bg); color: #fff; border: 1px solid var(--share-btn-border); padding: 15px; font-size: 16px; border-radius: 6px; cursor: pointer; font-weight: bold; text-transform: uppercase; box-sizing: border-box; transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease;
+            width: 100%;
+            background: var(--share-btn-bg);
+            color: #fff;
+            border: 1px solid var(--share-btn-border);
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.2s ease;
         }
-        .btn-share:hover { box-shadow: 0 0 15px var(--share-btn-border); }
+
+        .btn-share:hover {
+            box-shadow: 0 0 15px var(--share-btn-border);
+        }
     </style>
 </head>
 <body>
+
     <button class="settings-trigger" onclick="toggleModal(true)">⚙️</button>
+
     <div class="modal-overlay" id="settingsModal">
         <div class="modal">
-            <h2>⚙️ Settings</h2>
-            <label>Visual Theme:</label>
+            <h2 id="lang-modalTitle">⚙️ Настройки</h2>
+            
+            <label id="lang-modalLabel">Язык接口:</label>
+            <select class="select-custom" id="langSelect" onchange="changeLanguage(this.value)">
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+            </select>
+
+            <label id="theme-label-trans">Тема оформления:</label>
             <select class="select-custom" id="themeSelect" onchange="changeTheme(this.value)">
-                <option value="neon">Default</option>
+                <option value="neon" id="lang-themeDefault">По умолчанию</option>
                 <option value="matrix">Matrix</option>
                 <option value="cyberpunk">Cyberpunk</option>
                 <option value="sakura">Sakura</option>
-                <option value="crimson">Crimson</option>
+                <option value="crimson" id="lang-themeCrimson">Crimson</option>
             </select>
-            <button class="btn-close-modal" onclick="toggleModal(false)">CLOSE</button>
+
+            <button class="btn-close-modal" id="lang-modalClose" onclick="toggleModal(false)">ЗАКРЫТЬ</button>
         </div>
     </div>
+
     <div class="container">
-        <h1>📚 Homework Electronic Diary</h1>
+        <h1 id="lang-mainTitle">📚 Электронный дневник для домашних заданий</h1>
+
         <div class="form-group">
-            <label>Subject:</label>
+            <label id="lang-labelSubject">Предмет:</label>
             <select id="subject" class="subject-select"></select>
-            <label>Homework assignment:</label>
-            <textarea id="taskText" rows="3" placeholder="What needs to be done..."></textarea>
-            <label>Deadline:</label>
+
+            <label id="lang-labelTask">Домашнее задание:</label>
+            <textarea id="taskText" rows="3"></textarea>
+
+            <label id="lang-labelDeadline">Срок сдачи (дедлайн):</label>
             <input type="date" id="deadline">
-            <button onclick="addTask()" class="btn-add-main">➕ Add to Diary</button>
+
+            <button onclick="addTask()" id="lang-btnAdd" class="btn-add-main">➕ Добавить в дневник</button>
         </div>
-        <h2>📋 Current Tasks</h2>
+
+        <h2 id="lang-sectionTitle">📋 Текущие задания</h2>
         <div class="task-grid" id="taskList"></div>
+
         <div class="notes-group">
-            <label>📝 Notes:</label>
-            <textarea id="diaryNotes" class="notes-textarea" placeholder="Write important announcements here..."></textarea>
+            <label id="lang-labelNotes">📝 Заметки:</label>
+            <textarea id="diaryNotes" class="notes-textarea" oninput="saveNotes(this.value)"></textarea>
         </div>
+
         <div class="export-box">
-            <button class="btn-share" onclick="exportData()">📋 Copy homework for the class</button>
+            <button class="btn-share" onclick="exportData()" id="lang-btnShare">📋 Скопировать домашнее задание для класса</button>
         </div>
     </div>
+
     <script>
-        let timerInterval = null; let currentTheme = 'neon';
+        let timerInterval = null;
+        let currentLang = 'ru';
+        let currentTheme = 'neon';
+
+        // Разделенный список предметов без косых черт
         const subjectsData = [
-            { id: "m1", emoji: "🧮", en: "Mathematics" }, { id: "m2", emoji: "📐", en: "Algebra" }, { id: "m3", emoji: "📏", en: "Geometry" },
-            { id: "l1", emoji: "📖", en: "Russian Language" }, { id: "l2", emoji: "📚", en: "Literature" }, { id: "eng", emoji: "🇬🇧", en: "English" },
-            { id: "phys", emoji: "⚛️", en: "Physics" }, { id: "chem", emoji: "🧪", en: "Chemistry" }, { id: "hist", emoji: "⏳", en: "History" },
-            { id: "soc", emoji: "⚖️", en: "Social Studies" }, { id: "bio", emoji: "🌿", en: "Biology" }, { id: "geo", emoji: "🌍", en: "Geography" },
-            { id: "inf", emoji: "💻", en: "Computer Science" }, { id: "sport", emoji: "⚽", en: "Physical Education" }, { id: "other", emoji: "📘", en: "Other Subject" }
+            { id: "mathem", emoji: "🧮", ru: "Математика", en: "Mathematics" },
+            { id: "algebra", emoji: "📉", ru: "Алгебра", en: "Algebra" },
+            { id: "geometry", emoji: "📐", ru: "Геометрия", en: "Geometry" },
+            { id: "russian", emoji: "📖", ru: "Русский язык", en: "Russian Language" },
+            { id: "literature", emoji: "📚", ru: "Литература", en: "Literature" },
+            { id: "english", emoji: "🇬🇧", ru: "Иностранный язык (Английский)", en: "English Language" },
+            { id: "physics", emoji: "⚛️", ru: "Физика", en: "Physics" },
+            { id: "chemistry", emoji: "🧪", ru: "Химия", en: "Chemistry" },
+            { id: "history", emoji: "⏳", ru: "История", en: "History" },
+            { id: "social", emoji: "⚖️", ru: "Обществознание", en: "Social Studies" },
+            { id: "biology", emoji: "🌿", ru: "Биология", en: "Biology" },
+            { id: "geography", emoji: "🌍", ru: "География", en: "Geography" },
+            { id: "informatics", emoji: "💻", ru: "Информатика", en: "Computer Science" },
+            { id: "pe", emoji: "⚽", ru: "Физическая культура", en: "Physical Education" },
+            { id: "other", emoji: "📘", ru: "Другой предмет", en: "Other Subject" }
         ];
+
+        const translations = {
+            ru: {
+                mainTitle: "📚 Электронный дневник для домашних заданий",
+                labelSubject: "Предмет:",
+                labelTask: "Домашнее задание:",
+                phTask: "Что необходимо выполнить...",
+                labelDeadline: "Срок сдачи (дедлайн):",
+                btnAdd: "➕ Добавить в дневник",
+                sectionTitle: "📋 Текущие задания",
+                labelNotes: "📝 Заметки:",
+                phNotes: "Сюда можно записать важные объявления, расписание кружков или напоминания...",
+                btnShare: "📋 Скопировать домашнее задание для класса",
+                modalTitle: "⚙️ Настройки",
+                modalLabel: "Язык интерфейса:",
+                modalTheme: "Тема оформления:",
+                themeDefault: "По умолчанию",
+                themeCrimson: "Crimson",
+                modalClose: "ЗАКРЫТЬ",
+                emptyList: "Записи отсутствуют. Добавьте первое задание!",
+                alertFields: "Пожалуйста, заполните поле текста задания!",
+                confirmDel: "Вы действительно хотите удалить эту запись?",
+                cardDeadline: "📅 Срок сдачи: ",
+                btnReturn: "ВЕРНУТЬ",
+                btnDone: "ВЫПОЛНЕНО",
+                btnDel: "УДАЛИТЬ",
+                timerExpired: "🔴 Срок выполнения истек",
+                timerDone: "🎉 Задание выполнено!",
+                timerLeftDays: "🟢 До сдачи осталось: {d} дн.",
+                timerLeftTime: "⏳ Времени осталось: ",
+                exportHeader: "📌 Домашнее задание:\n\n",
+                exportNotes: "📝 Заметки:\n",
+                exportSuccess: "Все домашние задания и заметки успешно скопированы в буфер обмена!",
+                exportEmpty: "Список пуст, нет данных для копирования."
+            },
+            en: {
+                mainTitle: "📚 Homework Electronic Diary",
+                labelSubject: "Subject:",
+                labelTask: "Homework assignment:",
+                phTask: "What needs to be done...",
+                labelDeadline: "Deadline:",
+                btnAdd: "➕ Add to Diary",
+                sectionTitle: "📋 Current Tasks",
+                labelNotes: "📝 Notes:",
+                phNotes: "Write important announcements, schedules, or reminders here...",
+                btnShare: "📋 Copy homework for the class",
+                modalTitle: "⚙️ Settings",
+                modalLabel: "Interface Language:",
+                modalTheme: "Visual Theme:",
+                themeDefault: "Default",
+                themeCrimson: "Crimson",
+                modalClose: "CLOSE",
+                emptyList: "No tasks found. Add your first assignment!",
+                alertFields: "Please fill in the task text field!",
+                confirmDel: "Are you sure you want to delete this record?",
+                cardDeadline: "📅 Deadline: ",
+                btnReturn: "RETURN",
+                btnDone: "DONE",
+                btnDel: "DELETE",
+                timerExpired: "🔴 Time's up",
+                timerDone: "🎉 Task completed!",
+                timerLeftDays: "🟢 Time left: {d} days",
+                timerLeftTime: "⏳ Time left: ",
+                exportHeader: "📌 Homework Assignment:\n\n",
+                exportNotes: "📝 Notes:\n",
+                exportSuccess: "All homework and notes have been copied to clipboard!",
+                exportEmpty: "The list is empty, no data to copy."
+            }
+        };
+
         document.addEventListener("DOMContentLoaded", init);
+
         function init() {
-            currentTheme = localStorage.getItem("diary_theme") || "neon"; document.getElementById("themeSelect").value = currentTheme;
-            document.documentElement.setAttribute("data-theme", currentTheme); document.getElementById('deadline').valueAsDate = new Date();
+            currentLang = localStorage.getItem("diary_lang") || "ru";
+            document.getElementById("langSelect").value = currentLang;
+            
+            currentTheme = localStorage.getItem("diary_theme") || "neon";
+            document.getElementById("themeSelect").value = currentTheme;
+            document.documentElement.setAttribute("data-theme", currentTheme);
+            
+            document.getElementById('deadline').valueAsDate = new Date();
+            
+            applyLanguage();
+            renderTasks();
+
+            document.getElementById("diaryNotes").value = localStorage.getItem("diary_notes_data") || "";
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateAllTimers, 1000);
+        }
+
+        function toggleModal(show) {
+            document.getElementById("settingsModal").style.display = show ? "flex" : "none";
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem("diary_lang", lang);
+            applyLanguage();
+            renderTasks();
+        }
+
+        function changeTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem("diary_theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+            renderTasks();
+        }
+
+        function applyLanguage() {
+            const t = translations[currentLang];
+            
+            document.getElementById("lang-mainTitle").innerText = t.mainTitle;
+            document.getElementById("lang-labelSubject").innerText = t.labelSubject;
+            document.getElementById("lang-labelTask").innerText = t.labelTask;
+            document.getElementById("lang-labelDeadline").innerText = t.labelDeadline;
+            document.getElementById("lang-btnAdd").innerText = t.btnAdd;
+            document.getElementById("lang-sectionTitle").innerText = t.sectionTitle;
+            document.getElementById("lang-labelNotes").innerText = t.labelNotes;
+            document.getElementById("lang-btnShare").innerText = t.btnShare;
+            document.getElementById("lang-modalTitle").innerText = t.modalTitle;
+            document.getElementById("lang-modalLabel").innerHTML = currentLang === 'ru' ? "Язык интерфейса:" : "Interface Language:";
+            document.getElementById("theme-label-trans").innerText = t.modalTheme;
+            document.getElementById("lang-themeDefault").innerText = t.themeDefault;
+            document.getElementById("lang-themeCrimson").innerText = t.themeCrimson;
+            document.getElementById("lang-modalClose").innerText = t.modalClose;
+
+            document.getElementById("taskText").placeholder = t.phTask;
+            document.getElementById("diaryNotes").placeholder = t.phNotes;
+
             const selectEl = document.getElementById("subject");
+            const currentSelectedValue = selectEl.value;
+            selectEl.innerHTML = "";
             subjectsData.forEach(item => {
-                const opt = document.createElement("option"); opt.value = item.id; opt.innerText = `${item.emoji} ${item.en}`; selectEl.appendChild(opt);
+                const opt = document.createElement("option");
+                opt.value = item.id;
+                opt.innerText = `${item.emoji} ${currentLang === 'ru' ? item.ru : item.en}`;
+                selectEl.appendChild(opt);
             });
-            renderTasks(); document.getElementById("diaryNotes").value = localStorage.getItem("diary_notes_data") || "";
-            document.getElementById("diaryNotes").oninput = function() { localStorage.setItem("diary_notes_data", this.value); };
-            if (timerInterval) clearInterval(timerInterval); timerInterval = setInterval(updateAllTimers, 1000);
+            if(currentSelectedValue) selectEl.value = currentSelectedValue;
         }
-        function toggleModal(show) { document.getElementById("settingsModal").style.display = show ? "flex" : "none"; }
-        function changeTheme(theme) { currentTheme = theme; localStorage.setItem("diary_theme", theme); document.documentElement.setAttribute("data-theme", theme); renderTasks(); }
-        function getTasks() { return JSON.parse(localStorage.getItem("school_tasks")) || []; }
-        function saveTasks(tasks) { localStorage.setItem("school_tasks", JSON.stringify(tasks)); }
+
+        function getTasks() {
+            return JSON.parse(localStorage.getItem("school_tasks")) || [];
+        }
+
+        function saveTasks(tasks) {
+            localStorage.setItem("school_tasks", JSON.stringify(tasks));
+        }
+
+        function saveNotes(value) {
+            localStorage.setItem("diary_notes_data", value);
+        }
+
         function addTask() {
-            const subjectId = document.getElementById("subject").value; const text = document.getElementById("taskText").value.trim();
-            const deadline = document.getElementById("deadline").value; if (!text) { alert("Please fill in the task text field!"); return; }
-            const tasks = getTasks(); tasks.push({ id: Date.now(), subjectId: subjectId, text: text, deadline: deadline, completed: false });
-            saveTasks(tasks); renderTasks(); document.getElementById("taskText").value = "";
+            const subjectId = document.getElementById("subject").value;
+            const text = document.getElementById("taskText").value.trim();
+            const deadline = document.getElementById("deadline").value;
+
+            if (!text) {
+                alert(translations[currentLang].alertFields);
+                return;
+            }
+
+            const tasks = getTasks();
+            tasks.push({
+                id: Date.now(),
+                subjectId: subjectId,
+                text: text,
+                deadline: deadline,
+                completed: false
+            });
+
+            saveTasks(tasks);
+            renderTasks();
+            document.getElementById("taskText").value = "";
         }
-        function toggleTask(id) { const tasks = getTasks().map(t => { if (t.id === id) t.completed = !t.completed; return t; }); saveTasks(tasks); renderTasks(); }
-        function deleteTask(id) { if (confirm("Are you sure you want to delete this record?")) { const tasks = getTasks().filter(t => t.id !== id); saveTasks(tasks); renderTasks(); } }
+
+        function toggleTask(id) {
+            const tasks = getTasks().map(t => {
+                if (t.id === id) t.completed = !t.completed;
+                return t;
+            });
+            saveTasks(tasks);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            if (confirm(translations[currentLang].confirmDel)) {
+                const tasks = getTasks().filter(t => t.id !== id);
+                saveTasks(tasks);
+                renderTasks();
+            }
+        }
+
         function renderTasks() {
-            const taskList = document.getElementById("taskList"); taskList.innerHTML = ""; const tasks = getTasks();
-            if (tasks.length === 0) { taskList.innerHTML = `<p style='grid-column: 1/-1; text-align:center; color:#666;'>No tasks found. Add your first assignment!</p>`; return; }
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = "";
+            const tasks = getTasks();
+            const t = translations[currentLang];
+
+            if (tasks.length === 0) {
+                taskList.innerHTML = `<p style='grid-column: 1/-1; text-align:center; color:#666;'>${t.emptyList}</p>`;
+                return;
+            }
+
             tasks.forEach(task => {
-                const card = document.createElement("div"); card.className = `task-card ${task.completed ? 'completed' : ''}`;
-                const dateObj = new Date(task.deadline); const formattedDate = isNaN(dateObj) ? task.deadline : dateObj.toLocaleDateString("en-US");
+                const card = document.createElement("div");
+                card.className = `task-card ${task.completed ? 'completed' : ''}`;
+
+                const dateObj = new Date(task.deadline);
+                const formattedDate = isNaN(dateObj) ? task.deadline : dateObj.toLocaleDateString(currentLang === 'ru' ? "ru-RU" : "en-US");
+                
                 const sData = subjectsData.find(s => s.id === task.subjectId) || subjectsData[subjectsData.length - 1];
+                const subjectName = currentLang === 'ru' ? sData.ru : sData.en;
+
                 let timerHtml = `<div class="live-timer" id="timer-${task.id}" data-deadline="${task.deadline}" data-id="${task.id}" style="font-weight: bold; margin-top: 5px;"></div>`;
+
                 card.innerHTML = `
-                    <div><h3>${sData.emoji} ${sData.en}</h3><p>${task.text}</p></div>
-                    <div><div class="date">📅 Deadline: ${formattedDate}</div>${timerHtml}
+                    <div>
+                        <h3>${sData.emoji} ${subjectName}</h3>
+                        <p>${task.text}</p>
+                    </div>
+                    <div>
+                        <div class="date">${t.cardDeadline}${formattedDate}</div>
+                        ${timerHtml}
                         <div class="actions">
-                            <button class="btn-done" onclick="toggleTask(${task.id})">✅ ${task.completed ? 'RETURN' : 'DONE'}</button>
-                            <button class="btn-del" onclick="deleteTask(${task.id})">DELETE</button>
+                            <button class="btn-done" onclick="toggleTask(${task.id})">
+                                ✅ ${task.completed ? t.btnReturn : t.btnDone}
+                            </button>
+                            <button class="btn-del" onclick="deleteTask(${task.id})">
+                                🗑️ ${t.btnDel}
+                            </button>
                         </div>
-                    </div>`;
+                    </div>
+                `;
                 taskList.appendChild(card);
             });
+
             updateAllTimers();
         }
+
         function updateAllTimers() {
-            const timers = document.querySelectorAll('.live-timer'); let dataChanged = false; let tasks = getTasks();
+            const timers = document.querySelectorAll('.live-timer');
+            let dataChanged = false;
+            let tasks = getTasks();
+            const t = translations[currentLang];
+
             timers.forEach(timerElement => {
-                const deadlineStr = timerElement.getAttribute('data-deadline'); const taskId = parseInt(timerElement.getAttribute('data-id'));
-                const targetDate = new Date(deadlineStr); targetDate.setHours(23, 59, 59, 999); const now = new Date(); const diffMs = targetDate - now;
+                const deadlineStr = timerElement.getAttribute('data-deadline');
+                const taskId = parseInt(timerElement.getAttribute('data-id'));
+
+                const targetDate = new Date(deadlineStr);
+                targetDate.setHours(23, 59, 59, 999);
+
+                const now = new Date();
+                const diffMs = targetDate - now;
+
                 const currentTask = tasks.find(tsk => tsk.id === taskId);
+
                 if (diffMs <= 0) {
-                    if (currentTask && currentTask.completed) { tasks = tasks.filter(tsk => tsk.id !== taskId); dataChanged = true; return; }
-                    timerElement.innerHTML = "🔴 Time's up"; timerElement.style.color = "var(--danger-color)"; return;
+                    if (currentTask && currentTask.completed) {
+                        tasks = tasks.filter(tsk => tsk.id !== taskId);
+                        dataChanged = true;
+                        return;
+                    }
+
+                    timerElement.innerHTML = t.timerExpired;
+                    timerElement.style.color = "var(--danger-color)";
+                    return;
                 }
-                const diffSecs = Math.floor(diffMs / 1000); const diffMins = Math.floor(diffSecs / 60); const diffHours = Math.floor(diffMins / 60); const diffDays = Math.floor(diffHours / 24);
-                if (currentTask && currentTask.completed) { timerElement.innerHTML = "🎉 Task completed!"; timerElement.style.color = "var(--success-color)"; }
-                else if (diffDays >= 1) { timerElement.innerHTML = `🟢 Time left: ${diffDays} days`; timerElement.style.color = "var(--success-color)"; }
-                else {
-                    const hours = String(diffHours % 24).padStart(2, '0'); const minutes = String(diffMins % 60).padStart(2, '0'); const seconds = String(diffSecs % 60).padStart(2, '0');
-                    timerElement.innerHTML = `⏳ Time left: ${hours}:${minutes}:${seconds}`; timerElement.style.color = "#ffb74d";
+
+                const diffSecs = Math.floor(diffMs / 1000);
+                const diffMins = Math.floor(diffSecs / 60);
+                const diffHours = Math.floor(diffMins / 60);
+                const diffDays = Math.floor(diffHours / 24);
+
+                if (currentTask && currentTask.completed) {
+                    timerElement.innerHTML = t.timerDone;
+                    timerElement.style.color = "var(--success-color)";
+                } else if (diffDays >= 1) {
+                    timerElement.innerHTML = t.timerLeftDays.replace("{d}", diffDays);
+                    timerElement.style.color = "var(--success-color)";
+                } else {
+                    const hours = String(diffHours % 24).padStart(2, '0');
+                    const minutes = String(diffMins % 60).padStart(2, '0');
+                    const seconds = String(diffSecs % 60).padStart(2, '0');
+                    timerElement.innerHTML = `${t.timerLeftTime}${hours}:${minutes}:${seconds}`;
+                    timerElement.style.color = "#ffb74d";
                 }
             });
-            if (dataChanged) { saveTasks(tasks); renderTasks(); }
+
+            if (dataChanged) {
+                saveTasks(tasks);
+                renderTasks();
+            }
         }
+
         function exportData() {
-            const tasks = getTasks(); const savedNotes = localStorage.getItem("diary_notes_data") || "";
-            if (tasks.length === 0 && savedNotes.trim() === "") { alert("The list is empty."); return; }
-            let textMessage = "📌 Homework Assignment:\n\n";
+            const tasks = getTasks();
+            const savedNotes = localStorage.getItem("diary_notes_data") || "";
+            const t = translations[currentLang];
+
+            if (tasks.length === 0 && savedNotes.trim() === "") {
+                alert(t.exportEmpty);
+                return;
+            }
+
+            let textMessage = t.exportHeader;
+
             tasks.forEach(task => {
-                const dateObj = new Date(task.deadline); const formattedDate = isNaN(dateObj) ? task.deadline : dateObj.toLocaleDateString("en-US");
+                const dateObj = new Date(task.deadline);
+                const formattedDate = isNaN(dateObj) ? task.deadline : dateObj.toLocaleDateString(currentLang === 'ru' ? "ru-RU" : "en-US");
+                
                 const sData = subjectsData.find(s => s.id === task.subjectId) || subjectsData[subjectsData.length - 1];
-                let statusText = task.completed ? " [COMPLETED]" : "";
-                textMessage += `${sData.emoji} ${sData.en}${statusText} (Deadline: ${formattedDate}) — ${task.text}\n\n`;
+                const subjectName = currentLang === 'ru' ? sData.ru : sData.en;
+                
+                let statusText = "";
+                if (task.completed) {
+                    statusText = currentLang === 'ru' ? " [ВЫПОЛНЕНО]" : " [COMPLETED]";
+                }
+
+                textMessage += `${sData.emoji} ${subjectName}${statusText} (${t.cardDeadline.trim()} ${formattedDate}) — ${task.text}\n\n`;
             });
-            if (savedNotes.trim() !== "") { textMessage += `📝 Notes:\n${savedNotes.trim()}\n`; }
-            navigator.clipboard.writeText(textMessage.trim()).then(() => { alert("All homework and notes copied!"); });
+
+            if (savedNotes.trim() !== "") {
+                textMessage += `${t.exportNotes}${savedNotes.trim()}\n`;
+            }
+
+            navigator.clipboard.writeText(textMessage.trim()).then(() => {
+                alert(t.exportSuccess);
+            });
         }
     </script>
 </body>
